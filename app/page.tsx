@@ -116,11 +116,25 @@ export default function HomePage() {
               </div>
 
               <div className="tableRow">
-                <span>#1048</span>
-                <span>David Figar</span>
-                <span className="badge ok">Zaplaceno</span>
-                <span>8 490 Kč</span>
-              </div>
+  <span>#1048</span>
+  <span>BluePeak s.r.o.</span>
+  <span className="badge ok">Zaplaceno</span>
+  <span>18 490 Kč</span>
+</div>
+
+<div className="tableRow">
+  <span>#1047</span>
+  <span>NovaTech Solutions</span>
+  <span className="badge warn">Čeká</span>
+  <span>9 290 Kč</span>
+</div>
+
+<div className="tableRow">
+  <span>#1046</span>
+  <span>GrowthLab Agency</span>
+  <span className="badge ok">Zaplaceno</span>
+  <span>24 900 Kč</span>
+</div>
 
               <div className="tableRow">
                 <span>#1047</span>
