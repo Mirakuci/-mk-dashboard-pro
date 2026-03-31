@@ -1,65 +1,153 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import Sidebar from "../components/layout/Sidebar";
+import Topbar from "../components/layout/Topbar";
+import StatCard from "../components/dashboard/StatCard";
+import RevenueChart from "../components/dashboard/RevenueChart";
+import SectionCard from "../components/ui/SectionCard";
+
+type Stat = {
+  label: string;
+  value: string;
+  change: string;
+  positive: boolean;
+};
+
+export default function HomePage() {
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((res) => res.json())
+      .then((data) => {
+        setStats(data.stats);
+        setLoading(false);
+      })
+      .catch(() => {
+        setStats([
+          { label: "MRR", value: "428 900 Kč", change: "+8.1 %", positive: true },
+          { label: "Aktivní uživatelé", value: "2 481", change: "+12.4 %", positive: true },
+          { label: "Objednávky", value: "312", change: "+5.7 %", positive: true },
+          { label: "Konverze", value: "3.84 %", change: "-0.3 %", positive: false },
+        ]);
+        setLoading(false);
+      });
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="appShell">
+      <Sidebar />
+
+      <section className="appContent">
+        <Topbar
+          title="Přehled"
+          subtitle="Enterprise dashboard pro reporting, výkon a správu objednávek."
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        <section className="heroPanel">
+          <div>
+            <div className="eyebrow">Ops Console</div>
+            <h1>Dashboard, který působí jako reálný SaaS produkt.</h1>
+            <p>
+              Čistý enterprise layout, KPI karty, analytické panely a připravený základ
+              pro další podstránky.
+            </p>
+          </div>
+
+          <div className="heroSideStats">
+            <div className="miniCard">
+              <span>Dnešní návštěvy</span>
+              <strong>1 284</strong>
+            </div>
+            <div className="miniCard">
+              <span>Open tickets</span>
+              <strong>4</strong>
+            </div>
+            <div className="miniCard">
+              <span>Aktivní kampaně</span>
+              <strong>12</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="statsGrid">
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="statCard skeleton" />
+              ))
+            : stats.map((item) => <StatCard key={item.label} {...item} />)}
+        </section>
+
+        <section className="mainGrid">
+          <SectionCard title="Revenue" subtitle="Vývoj výkonu" rightLabel="30 dní">
+            <RevenueChart />
+          </SectionCard>
+
+          <SectionCard title="Traffic" subtitle="Zdroje návštěvnosti">
+            <div className="trafficList">
+              <div>
+                <span>Organic</span>
+                <b>48 %</b>
+              </div>
+              <div>
+                <span>Referral</span>
+                <b>21 %</b>
+              </div>
+              <div>
+                <span>Ads</span>
+                <b>17 %</b>
+              </div>
+              <div>
+                <span>Direct</span>
+                <b>14 %</b>
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Objednávky" subtitle="Poslední aktivita" className="wideCard">
+            <div className="tableMock">
+              <div className="tableRow tableHead">
+                <span>ID</span>
+                <span>Zákazník</span>
+                <span>Status</span>
+                <span>Částka</span>
+              </div>
+
+              <div className="tableRow">
+                <span>#1048</span>
+                <span>David Figar</span>
+                <span className="badge ok">Zaplaceno</span>
+                <span>8 490 Kč</span>
+              </div>
+
+              <div className="tableRow">
+                <span>#1047</span>
+                <span>MK Studio</span>
+                <span className="badge warn">Čeká</span>
+                <span>3 290 Kč</span>
+              </div>
+
+              <div className="tableRow">
+                <span>#1046</span>
+                <span>Auto Care Zlín</span>
+                <span className="badge ok">Zaplaceno</span>
+                <span>12 900 Kč</span>
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Aktivita" subtitle="Feed systému">
+            <ul className="activityList">
+              <li>Nová objednávka od klienta Auto Care Zlín.</li>
+              <li>Vygenerován týdenní report.</li>
+              <li>Potvrzená platba k objednávce #1048.</li>
+              <li>Přidán nový produkt do katalogu.</li>
+            </ul>
+          </SectionCard>
+        </section>
+      </section>
+    </main>
   );
 }
