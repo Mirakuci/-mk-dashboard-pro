@@ -1,5 +1,5 @@
 export async function GET() {
-  await new Promise((res) => setTimeout(res, 800));
+  await new Promise((res) => setTimeout(res, 700));
 
   return Response.json({
     stats: [
