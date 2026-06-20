@@ -970,9 +970,16 @@ textarea {
   }
 
   .heroPanel,
-  .statsGrid,
   .mainGrid {
     grid-template-columns: 1fr;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statsGridThree {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .menuToggle {
@@ -1075,6 +1082,53 @@ textarea {
 
   .sectionCard h3 {
     font-size: 24px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statsGridThree {
+    grid-template-columns: 1fr;
+  }
+
+  .tableMock {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tableRow {
+    min-width: 480px;
+  }
+
+  .tableRowCustomers {
+    min-width: 600px;
+  }
+
+  .tableControls {
+    flex-direction: column;
+  }
+
+  .filterGroup {
+    flex-wrap: wrap;
+  }
+
+  .donutLegend {
+    grid-template-columns: 1fr;
+  }
+
+  .detailHeader {
+    padding: 0 4px;
+  }
+
+  .toastContainer {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .notFoundCode {
+    font-size: 80px;
   }
 }
 /* SKELETON LOADING */
