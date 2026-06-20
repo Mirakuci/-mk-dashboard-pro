@@ -32,8 +32,8 @@ export default function Sidebar({ open, onClose }: Props) {
       <div className="sidebarBrand">
         <div className="sidebarLogo">MK</div>
         <div>
-          <div className="sidebarTitle">Ops Console</div>
-          <div className="sidebarSub">Enterprise UI</div>
+          <div className="sidebarTitle">MK Cloud</div>
+          <div className="sidebarSub">Dashboard</div>
         </div>
       </div>
 
