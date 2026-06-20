@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useChartTheme } from "./chartTheme";
 
 const data = [
   { name: "Led", value: 12000 },
@@ -20,30 +21,21 @@ const data = [
 ];
 
 export default function RevenueChart() {
+  const { tooltipStyle, gridStroke, axisStroke } = useChartTheme();
+
   return (
     <div style={{ width: "100%", height: 260 }}>
-      <ResponsiveContainer>
+      <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
-          <CartesianGrid stroke="rgba(255,255,255,0.05)" />
+          <CartesianGrid stroke={gridStroke} />
           <XAxis
             dataKey="name"
-            stroke="#6b7c93"
+            stroke={axisStroke}
             tickLine={false}
             axisLine={false}
           />
-          <YAxis
-            stroke="#6b7c93"
-            tickLine={false}
-            axisLine={false}
-          />
-          <Tooltip
-            contentStyle={{
-              background: "#0f1723",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: "10px",
-              color: "#e8eef7",
-            }}
-          />
+          <YAxis stroke={axisStroke} tickLine={false} axisLine={false} />
+          <Tooltip contentStyle={tooltipStyle} />
           <Line
             type="monotone"
             dataKey="value"

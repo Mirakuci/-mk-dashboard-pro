@@ -10,11 +10,25 @@ const items = [
   { href: "/products", label: "Produkty" },
 ];
 
-export default function Sidebar() {
+type Props = {
+  open: boolean;
+  onClose: () => void;
+};
+
+export default function Sidebar({ open, onClose }: Props) {
   const pathname = usePathname();
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${open ? "sidebarOpen" : ""}`}>
+      <button
+        className="sidebarClose"
+        type="button"
+        onClick={onClose}
+        aria-label="Zavřít menu"
+      >
+        ✕
+      </button>
+
       <div className="sidebarBrand">
         <div className="sidebarLogo">MK</div>
         <div>
@@ -29,6 +43,7 @@ export default function Sidebar() {
             key={item.href}
             href={item.href}
             className={`sidebarLink ${pathname === item.href ? "activeLink" : ""}`}
+            onClick={onClose}
           >
             {item.label}
           </Link>
@@ -36,9 +51,9 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebarInfo">
-        <div className="sidebarInfoTitle">Systém běží stabilně</div>
+        <div className="sidebarInfoTitle">Všechny systémy OK</div>
         <div className="sidebarInfoText">
-          Připraveno pro napojení API a reálných dat.
+          Uptime 99.98 % · Poslední sync před 2 min
         </div>
       </div>
     </aside>

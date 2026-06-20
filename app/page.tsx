@@ -1,10 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Sidebar from "../components/layout/Sidebar";
 import Topbar from "../components/layout/Topbar";
 import StatCard from "../components/dashboard/StatCard";
-import RevenueChart from "../components/dashboard/RevenueChart";
+import dynamic from "next/dynamic";
+
+const RevenueChart = dynamic(
+  () => import("../components/dashboard/RevenueChart"),
+  { ssr: false, loading: () => <div style={{ width: "100%", height: 260 }} /> },
+);
+const OrdersBarChart = dynamic(
+  () => import("../components/dashboard/OrdersBarChart"),
+  { ssr: false, loading: () => <div style={{ width: "100%", height: 260 }} /> },
+);
+const TrafficDonutChart = dynamic(
+  () => import("../components/dashboard/TrafficDonutChart"),
+  { ssr: false, loading: () => <div style={{ width: "100%", height: 220 }} /> },
+);
 import SectionCard from "../components/ui/SectionCard";
 
 type Stat = {
@@ -14,15 +26,26 @@ type Stat = {
   positive: boolean;
 };
 
+type Order = {
+  id: string;
+  customer: string;
+  status: string;
+  amount: string;
+};
+
 export default function HomePage() {
   const [stats, setStats] = useState<Stat[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/stats")
-      .then((res) => res.json())
-      .then((data) => {
-        setStats(data.stats);
+    Promise.all([
+      fetch("/api/stats").then((r) => r.json()),
+      fetch("/api/orders").then((r) => r.json()),
+    ])
+      .then(([statsData, ordersData]) => {
+        setStats(statsData.stats);
+        setOrders(ordersData.orders);
         setLoading(false);
       })
       .catch(() => {
@@ -37,22 +60,19 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="appShell">
-      <Sidebar />
-
-      <section className="appContent">
-        <Topbar
-          title="Přehled"
-          subtitle="Enterprise dashboard pro reporting, výkon a správu objednávek."
-        />
+    <>
+      <Topbar
+        title="Přehled"
+        subtitle="Enterprise dashboard pro reporting, výkon a správu objednávek."
+      />
 
         <section className="heroPanel">
           <div>
-            <div className="eyebrow">Ops Console</div>
-            <h1>Dashboard, který působí jako reálný SaaS produkt.</h1>
+            <div className="eyebrow">Červen 2026</div>
+            <h1>Dobrý den, Miroslave.</h1>
             <p>
-              Čistý enterprise layout, KPI karty, analytické panely a připravený základ
-              pro další podstránky.
+              Vaše metriky rostou stabilně. MRR překročil cíl o 8 % a aktivní
+              uživatelé stoupli na nové maximum. Podívejte se na detailní přehled níže.
             </p>
           </div>
 
@@ -86,24 +106,7 @@ export default function HomePage() {
           </SectionCard>
 
           <SectionCard title="Traffic" subtitle="Zdroje návštěvnosti">
-            <div className="trafficList">
-              <div>
-                <span>Organic</span>
-                <b>48 %</b>
-              </div>
-              <div>
-                <span>Referral</span>
-                <b>21 %</b>
-              </div>
-              <div>
-                <span>Ads</span>
-                <b>17 %</b>
-              </div>
-              <div>
-                <span>Direct</span>
-                <b>14 %</b>
-              </div>
-            </div>
+            <TrafficDonutChart />
           </SectionCard>
 
           <SectionCard title="Objednávky" subtitle="Poslední aktivita" className="wideCard">
@@ -115,53 +118,49 @@ export default function HomePage() {
                 <span>Částka</span>
               </div>
 
-              <div className="tableRow">
-  <span>#1048</span>
-  <span>BluePeak s.r.o.</span>
-  <span className="badge ok">Zaplaceno</span>
-  <span>18 490 Kč</span>
-</div>
-
-<div className="tableRow">
-  <span>#1047</span>
-  <span>NovaTech Solutions</span>
-  <span className="badge warn">Čeká</span>
-  <span>9 290 Kč</span>
-</div>
-
-<div className="tableRow">
-  <span>#1046</span>
-  <span>GrowthLab Agency</span>
-  <span className="badge ok">Zaplaceno</span>
-  <span>24 900 Kč</span>
-</div>
-
-              <div className="tableRow">
-                <span>#1047</span>
-                <span>MK Studio</span>
-                <span className="badge warn">Čeká</span>
-                <span>3 290 Kč</span>
-              </div>
-
-              <div className="tableRow">
-                <span>#1046</span>
-                <span>Auto Care Zlín</span>
-                <span className="badge ok">Zaplaceno</span>
-                <span>12 900 Kč</span>
-              </div>
+              {loading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="tableRow skeletonRow">
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                  ))
+                : orders.map((order) => (
+                    <div key={order.id} className="tableRow">
+                      <span>{order.id}</span>
+                      <span>{order.customer}</span>
+                      <span
+                        className={
+                          order.status === "Zaplaceno"
+                            ? "badge ok"
+                            : order.status === "Čeká"
+                            ? "badge warn"
+                            : "badge danger"
+                        }
+                      >
+                        {order.status}
+                      </span>
+                      <span>{order.amount}</span>
+                    </div>
+                  ))}
             </div>
+          </SectionCard>
+
+          <SectionCard title="Objednávky" subtitle="Týdenní přehled" rightLabel="7 dní">
+            <OrdersBarChart />
           </SectionCard>
 
           <SectionCard title="Aktivita" subtitle="Feed systému">
             <ul className="activityList">
-              <li>Nová objednávka od klienta Auto Care Zlín.</li>
+              <li>Nová objednávka od klienta Nordic Solutions.</li>
               <li>Vygenerován týdenní report.</li>
               <li>Potvrzená platba k objednávce #1048.</li>
               <li>Přidán nový produkt do katalogu.</li>
             </ul>
           </SectionCard>
         </section>
-      </section>
-    </main>
+    </>
   );
 }
