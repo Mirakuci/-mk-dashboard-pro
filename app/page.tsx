@@ -69,10 +69,10 @@ export default function HomePage() {
         <section className="heroPanel">
           <div>
             <div className="eyebrow">Červen 2026</div>
-            <h1>Dobrý den, Miroslave.</h1>
+            <h1>Přehled výkonu</h1>
             <p>
-              Vaše metriky rostou stabilně. MRR překročil cíl o 8 % a aktivní
-              uživatelé stoupli na nové maximum. Podívejte se na detailní přehled níže.
+              Metriky rostou stabilně. MRR překročil cíl o 8 % a aktivní
+              uživatelé stoupli na nové maximum.
             </p>
           </div>
 
